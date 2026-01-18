@@ -1,194 +1,241 @@
-# Terraform AWS EC2 Web Server (Free Tier)
+# Terraform AWS DevOps Project 🚀
 
-A beginner‑friendly **Terraform** project that provisions an **AWS EC2** instance running a simple web server. This project is designed to practice **IaC basics**, **security groups**, **user data**, and the **Terraform workflow**, while staying within the **AWS Free Tier**.
+This repository contains a **beginner-friendly DevOps project** that demonstrates how to provision AWS infrastructure using **Terraform**, serve a static website on **EC2 with Nginx**, and validate the infrastructure using **GitHub Actions (CI)**.
 
-----
-
-## 📌 What This Project Does
-
-* Creates an AWS **EC2 instance** (Free Tier eligible)
-* Configures a **Security Group** allowing:
-
-  * SSH (22)
-  * HTTP (80)
-* Uses **user_data** to automatically install and start a web server
-* Outputs a **public IP** to access the web page
-* Cleanly destroys all resources using Terraform
-
-> ❗ This project **does NOT** create:
->
-> * Elastic IP
-> * Additional EBS volumes
+This project is intentionally designed for **new DevOps engineers** to understand *how things work*, not just *what commands to run*.
 
 ---
 
-## 🧱 Architecture (Simple)
+## 📌 Project Overview
 
-```
-Your Browser
-     │
-     ▼
-Public Internet
-     │
-     ▼
-EC2 Instance (Amazon Linux)
- ├── Security Group
- │   ├── SSH : 22
- │   └── HTTP: 80
- └── User Data → Apache Web Server
-```
+**Goal:**
+
+* Provision an AWS EC2 instance using Terraform
+* Configure security groups (SSH + HTTP)
+* Install and run Nginx using `user_data`
+* Serve a simple portfolio-style webpage
+* Add CI checks using GitHub Actions
+
+**What this project is NOT:**
+
+* Fully automated production deployment
+* Advanced CI/CD with auto-apply (yet)
+
+---
+
+## 🛠 Tools & Technologies Used
+
+| Tool            | Purpose                |
+| --------------- | ---------------------- |
+| AWS             | Cloud provider         |
+| Terraform       | Infrastructure as Code |
+| EC2             | Compute instance       |
+| Security Groups | Network access control |
+| Nginx           | Web server             |
+| Git & GitHub    | Version control        |
+| GitHub Actions  | CI for Terraform       |
 
 ---
 
 ## 📂 Project Structure
 
 ```
-terraform-aws-ec2-webserver/
-├── main.tf          # EC2 + Security Group resources
-├── provider.tf      # AWS provider configuration
-├── user_data.sh     # Web server bootstrap script
-├── terraform.tfstate
-└── README.md
+terraform-aws-devops-project/
+│
+├── .github/
+│   └── workflows/
+│       └── terraform-ci.yml   # CI pipeline for Terraform
+│
+├── scripts/
+│   └── user_data.sh           # EC2 bootstrap script
+│
+├── terraform/
+│   ├── main.tf                # Security group & core resources
+│   ├── ec2.tf                 # EC2 instance definition
+│   ├── provider.tf            # AWS provider config
+│   ├── variable.tf            # Input variables
+│   ├── terraform.tfvars       # Local-only variable values (ignored by git)
+│   ├── output.tf              # Outputs (public IP, etc.)
+│   └── .terraform.lock.hcl    # Provider lock file
+│
+├── .gitignore
+├── README.md
 ```
 
 ---
 
-## ✅ Prerequisites
+## 🔐 Security & Best Practices
 
-Before you begin, make sure you have:
+### Why `terraform.tfvars` is ignored
 
-* AWS account (Free Tier)
-* IAM user with programmatic access
-* AWS CLI configured
+This file contains **sensitive or environment-specific data**, such as:
 
-  ```bash
-  aws configure
-  ```
-* Terraform installed (v1.x recommended)
+* EC2 key pair name
+* Instance type overrides
 
-  ```bash
-  terraform -version
-  ```
-* An existing **EC2 Key Pair** in AWS
+➡️ In real-world DevOps projects:
 
-> 🔐 If you did **not download the key earlier**, you **cannot SSH** into that instance.
-> Solution: destroy and recreate the instance with a new key pair.
+* Secrets are **never committed to GitHub**
+* Each environment (local, CI, prod) injects values differently
 
----
+Your `.gitignore` correctly includes:
 
-## ⚙️ Configuration Notes
-
-* **Region**: Defined in `provider.tf`
-* **Instance Type**: `t2.micro` (Free Tier)
-* **AMI**: Amazon Linux 2
-* **Key Pair**: Must already exist in AWS
-* **HTTP rule** is mandatory for web access
-
----
-
-## 🚀 How to Deploy
-
-### 1️⃣ Initialize Terraform
-
-```bash
-terraform init
+```
+*.tfvars
 ```
 
-### 2️⃣ Validate Configuration
+---
 
-```bash
-terraform validate
-```
+## ⚙️ Terraform Configuration Explained
 
-### 3️⃣ Preview Resources
+### Provider (`provider.tf`)
 
-```bash
-terraform plan
-```
+Defines:
 
-### 4️⃣ Create Infrastructure
+* AWS as the provider
+* Region configuration
 
-```bash
-terraform apply
-```
+Credentials are **NOT hardcoded**.
+Terraform expects AWS credentials via:
 
-Type `yes` when prompted.
+* `~/.aws/credentials` (local)
+* GitHub Secrets (CI)
 
 ---
 
-## 🌐 Access the Web Server
+### Variables (`variable.tf`)
 
-After apply completes:
+Used to avoid hardcoding values:
 
-1. Copy the **public IP** from the output
-2. Open a browser:
+* `instance_type`
+* `key_name`
+* `project_name`
 
-   ```
-   http://<PUBLIC_IP>
-   ```
-3. You should see the default Apache test page 🎉
+This makes the project:
 
----
-
-## 🧹 Destroy Infrastructure (Important)
-
-To avoid charges:
-
-```bash
-terraform destroy
-```
-
-Type `yes` to confirm.
+* Reusable
+* Safer
+* Easier to maintain
 
 ---
 
-## 🧠 Common Issues & Fixes
+### EC2 & Security Group (`main.tf`, `ec2.tf`)
 
-### ❌ HTTP not working
+* Security group allows:
 
-* Security group missing port **80** rule
-* Instance created before rule was added
+  * SSH (22)
+  * HTTP (80)
+* EC2 instance uses:
 
-✅ **Fix**: Destroy and recreate resources
-
----
-
-### ❌ Cannot SSH into EC2
-
-* Key file not downloaded
-* Wrong key pair used
-
-✅ **Fix**: Create a new key pair and re‑deploy
+  * Amazon Linux AMI
+  * Nginx installed via `user_data`
 
 ---
 
-## 📘 Learning Outcomes
+### User Data Script (`scripts/user_data.sh`)
 
-By completing this project, you will understand:
+This script runs **automatically when EC2 boots**:
 
-* Terraform workflow (init → plan → apply → destroy)
-* AWS EC2 basics
-* Security Group rules
-* User data automation
-* Free Tier best practices
+* Updates system packages
+* Installs Nginx
+* Starts the web server
+* Deploys a simple HTML page
 
----
-
-## 🔮 Next Improvements (Optional)
-
-* Add variables (`variables.tf`)
-* Use outputs (`outputs.tf`)
-* Add remote backend (S3)
-* Create ALB (later, non‑free tier)
-* CI/CD with GitHub Actions
+This mimics **real cloud-init usage in production**.
 
 ---
 
-## 👨‍💻 Author
+## 🔄 CI with GitHub Actions
 
-**Subhojit Das**
-Junior DevOps | RHCSA | CKA
+### What the CI pipeline does
+
+On every `push` or `pull request` to `main`:
+
+1. Checks out the repo
+2. Installs Terraform
+3. Runs:
+
+   * `terraform init`
+   * `terraform fmt -check`
+   * `terraform validate`
+   * `terraform plan`
+
+### Why apply is NOT included
+
+Auto-apply is intentionally skipped because:
+
+* It requires AWS credentials
+* It needs environment approval
+* This is safer for beginners
+
+This mirrors **real-world CI practices**.
 
 ---
 
-⭐ If you found this helpful, consider starring the repo!
+## ❗ Common Issues You Faced (And Why They Matter)
+
+### `terraform destroy` not working after git clone
+
+Reason:
+
+* Terraform state (`.tfstate`) is local
+* You deleted it when the directory was removed
+
+➡️ In production, state is stored remotely (S3 + DynamoDB).
+
+---
+
+### GitHub Actions stuck on variables
+
+Reason:
+
+* CI cannot prompt for input
+* Variables like `key_name` must be injected
+
+Solution (future):
+
+* Use GitHub Secrets
+* Use `-var` flags or env vars
+
+---
+
+### AWS credentials error in CI
+
+Reason:
+
+* No credentials available inside GitHub runner
+
+Correct approach:
+
+* Use IAM user with limited permissions
+* Store credentials in GitHub Secrets
+
+---
+
+## 🧠 What You Have Learned So Far
+
+✔ Real Terraform project structure
+✔ How EC2 is provisioned via IaC
+✔ Why CI pipelines fail without secrets
+✔ How DevOps handles security
+✔ Why errors are part of learning
+
+---
+
+## 🛣️ Next Steps (When You Resume)
+
+* Add remote Terraform state (S3)
+* Inject AWS credentials via GitHub Secrets
+* Enable controlled `terraform apply`
+* Improve the portfolio website
+
+---
+
+## 🙌 Final Note
+
+This project is **not rushed DevOps**.
+It is **correct DevOps**.
+
+If you understand *why* something failed, you are learning faster than most beginners.
+
+Happy learning 🚀
