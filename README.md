@@ -4,7 +4,7 @@ A beginnerâ€‘friendly **Terraform** project that provisions an **AWS EC2** insta
 
 ---
 
-## í³Œ What This Project Does
+## ğŸ“Œ What This Project Does
 
 * Creates an AWS **EC2 instance** (Free Tier eligible)
 * Configures a **Security Group** allowing:
@@ -22,7 +22,7 @@ A beginnerâ€‘friendly **Terraform** project that provisions an **AWS EC2** insta
 
 ---
 
-## í·± Architecture (Simple)
+## ğŸ§± Architecture (Simple)
 
 ```
 Your Browser
@@ -40,7 +40,7 @@ EC2 Instance (Amazon Linux)
 
 ---
 
-## í³‚ Project Structure
+## ğŸ“‚ Project Structure
 
 ```
 terraform-aws-ec2-webserver/
@@ -71,7 +71,7 @@ Before you begin, make sure you have:
   ```
 * An existing **EC2 Key Pair** in AWS
 
-> í´ If you did **not download the key earlier**, you **cannot SSH** into that instance.
+> ğŸ” If you did **not download the key earlier**, you **cannot SSH** into that instance.
 > Solution: destroy and recreate the instance with a new key pair.
 
 ---
@@ -86,7 +86,7 @@ Before you begin, make sure you have:
 
 ---
 
-## íº€ How to Deploy
+## ğŸš€ How to Deploy
 
 ### 1ï¸âƒ£ Initialize Terraform
 
@@ -116,7 +116,7 @@ Type `yes` when prompted.
 
 ---
 
-## í¼ Access the Web Server
+## ğŸŒ Access the Web Server
 
 After apply completes:
 
@@ -126,11 +126,11 @@ After apply completes:
    ```
    http://<PUBLIC_IP>
    ```
-3. You should see the default Apache test page í¾‰
+3. You should see the default Apache test page ğŸ‰
 
 ---
 
-## í·¹ Destroy Infrastructure (Important)
+## ğŸ§¹ Destroy Infrastructure (Important)
 
 To avoid charges:
 
@@ -142,7 +142,7 @@ Type `yes` to confirm.
 
 ---
 
-## í·  Common Issues & Fixes
+## ğŸ§  Common Issues & Fixes
 
 ### âŒ HTTP not working
 
@@ -162,7 +162,7 @@ Type `yes` to confirm.
 
 ---
 
-## í³˜ Learning Outcomes
+## ğŸ“˜ Learning Outcomes
 
 By completing this project, you will understand:
 
@@ -174,7 +174,7 @@ By completing this project, you will understand:
 
 ---
 
-## í´® Next Improvements (Optional)
+## ğŸ”® Next Improvements (Optional)
 
 * Add variables (`variables.tf`)
 * Use outputs (`outputs.tf`)
@@ -184,7 +184,7 @@ By completing this project, you will understand:
 
 ---
 
-## í±¨â€í²» Author
+## ğŸ‘¨â€ğŸ’» Author
 
 **Subhojit Das**
 Junior DevOps | RHCSA | CKA
@@ -192,4 +192,3 @@ Junior DevOps | RHCSA | CKA
 ---
 
 â­ If you found this helpful, consider starring the repo!
-
