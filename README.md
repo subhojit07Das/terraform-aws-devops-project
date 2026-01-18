@@ -2,7 +2,7 @@
 
 A beginner‑friendly **Terraform** project that provisions an **AWS EC2** instance running a simple web server. This project is designed to practice **IaC basics**, **security groups**, **user data**, and the **Terraform workflow**, while staying within the **AWS Free Tier**.
 
----
+----
 
 ## 📌 What This Project Does
 
