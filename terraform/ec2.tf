@@ -14,7 +14,7 @@ resource "aws_instance" "web" {
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
 
-  user_data = file("../scripts/user_data.sh")
+  user_data = filebase64("../scripts/user_data.sh")
 
   tags = {
     Name = "${var.project_name}-ec2"
